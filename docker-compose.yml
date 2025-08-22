@@ -1,0 +1,8 @@
+services:
+
+  jenkins:
+    build: Jenkins # Где Dockerfile
+    container_name: Jenkins_for_automatic_tuning
+    ports:
+      - 5000:8080 # Host:Container
+    # auto_remove: true
