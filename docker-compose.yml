@@ -1,7 +1,9 @@
 services:
 
   jenkins:
-    build: Jenkins # Где Dockerfile
+    build: # Где Dockerfile
+      context: Jenkins
+      dockerfile: Jenkins.Dockerfile
     container_name: Jenkins_for_automatic_tuning
     ports:
       - 5000:8080 # Host:Container
