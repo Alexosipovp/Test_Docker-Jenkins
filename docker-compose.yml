@@ -1,7 +1,7 @@
 services:
 
   jenkins:
-    build: # Где Dockerfile
+    build:
       context: Jenkins
       dockerfile: Jenkins.Dockerfile
     container_name: Jenkins_for_automatic_tuning
