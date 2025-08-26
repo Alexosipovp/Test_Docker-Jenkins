@@ -1,2 +1,4 @@
 git
-configuration-as-code
+# Комментарий 1
+
+configuration-as-code # Комментарий 2

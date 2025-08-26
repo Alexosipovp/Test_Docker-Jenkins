@@ -33,16 +33,13 @@ Waiting_for_Jenkins_password_generation
 Waiting_for_Jenkins_to_be_ready
 
 echo "Начало скачки плагинов"
-
-#jenkins_cli install-plugin git
-#jenkins_cli install-plugin configuration-as-code
-
-while IFS= read -r plugin || [[ -n "$plugin" ]]; do
-    clean_plugin=$(echo -e "$plugin" | tr -d '\000-\031')
+mapfile -t plugins < "plugins.txt"  # Читаем ВСЕ строки сразу чтобы избежать конкуренции за stdin
+for plugin in "${plugins[@]}"; do
+    clean_plugin=$(echo -e "$plugin" | sed 's/ .*$//; s/#.*$//' | tr -d '\000-\031') # Удаление лишних символов и комментариев
+    [[ -z "$clean_plugin" ]] && continue # Пропуск пустых строк
     echo "Установка: '$clean_plugin'"
-    jenkins_cli install-plugin $clean_plugin
-done < "plugins.txt"
-
+    jenkins_cli install-plugin "$clean_plugin"
+done
 echo "Конец скачки плагинов"
 
 # Перезагрузка после установки плагинов
