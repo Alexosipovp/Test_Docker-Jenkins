@@ -1,0 +1,115 @@
+jenkins:
+
+  systemMessage: "Configuration as Code plugin!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n"
+
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false # запрещает анонимный доступ на чтение
+
+  crumbIssuer:
+    standard:
+      excludeClientIPFromCrumb: false # привязывает токен к IP (повышает безопасность)
+
+  disableRememberMe: false
+  # Разрешает функцию "Запомнить меня" на странице входа
+  # Удаление или установка true усилит безопасность, но ухудшит удобство
+
+  labelAtoms: # Метки для группировки агентов
+  - name: "built-in"
+
+  markupFormatter: "plainText"
+  # Форматирование текста: plainText отключает HTML в описаниях задач
+  # Удаление разрешит HTML (риск XSS-атак)
+
+  nodeMonitors:
+  - "architecture"  # Мониторинг архитектуры узлов
+  - "clock"         # Мониторинг расхождения времени
+  - diskSpace:      # Мониторинг свободного места на диске
+      freeSpaceThreshold: "1GiB"         # Критический порог
+      freeSpaceWarningThreshold: "2GiB"  # Предупреждение
+  - "swapSpace"     # Мониторинг swap-пространства
+  - tmpSpace:       # Мониторинг временной директории
+      freeSpaceThreshold: "1GiB"
+      freeSpaceWarningThreshold: "2GiB"
+  - "responseTime"  # Мониторинг времени отклика
+  # Удаление отключит мониторинг (риск нехватки ресурсов)
+
+  numExecutors: 2
+  # Количество одновременных сборок на мастер-узле
+  # Удаление установит значение по умолчанию (зависит от ядер CPU)
+
+  quietPeriod: 5    # Задержка перед запуском сборки (секунды) для накопления изменений (по умолчанию 5 сек)
+
+  remotingSecurity:
+    enabled: true
+  # Включает шифрование соединения с агентами
+  # Удаление или отключение снизит безопасность
+
+  scmCheckoutRetryCount: 0 # Количество попыток повтора при ошибке checkout из SCM (по умолчанию 0)
+
+  securityRealm:
+    local:
+      allowsSignup: false  # Запрещает саморегистрацию
+      enableCaptcha: false # Отключает CAPTCHA
+      users:
+      - id: "admin"
+        name: "admin"
+        properties: [...] # Настройки пользователя
+  # Локальная база пользователей. Удаление отключит аутентификацию
+
+  slaveAgentPort: -1
+  # Порт для JNLP-агентов: -1 отключает порт
+  # Удаление или изменение порта повлияет на подключение агентов
+
+  updateCenter:
+    sites:
+    - id: "default"
+      url: "https://updates.jenkins.io/update-center.json"
+  # Источник обновлений плагинов. Удаление нарушит обновления
+
+security:
+  apiToken:
+    creationOfLegacyTokenEnabled: false     # Запрещает старые токены
+    tokenGenerationOnCreationEnabled: false # Не генерировать токены при создании
+    usageStatisticsEnabled: true            # Отслеживание использования токенов
+  # Настройки API-токенов. Удаление ослабит безопасность
+
+  gitHooks:
+    allowedOnAgents: false      # Запрещает git-hooks на агентах
+    allowedOnController: false  # Запрещает git-hooks на контроллере
+  # Удаление разрешит hooks (риск выполнения произвольного кода)
+
+  gitHostKeyVerificationConfiguration:
+    sshHostKeyVerificationStrategy: "knownHostsFileVerificationStrategy"
+  # Проверка SSH-ключей Git. Удаление отключит проверку (риск MITM-атак)
+
+  scriptApproval:
+    forceSandbox: false  # Не форсировать скрипты
+  # Удаление может разрешить небезопасные скрипты
+
+unclassified:
+  buildDiscarders:
+    configuredBuildDiscarders:
+    - "jobBuildDiscarder"
+  # Политика удаления старых сборок. Удаление отключит очистку
+
+  fingerprints:
+    fingerprintCleanupDisabled: false  # Включить очистку fingerprint-ов
+    storage: "file"                    # Хранить в файловой системе
+  # Удаление может привести к накоплению fingerprint-ов
+
+  location:
+    adminAddress: "<nobody@nowhere>"
+  # Email администратора. Удаление - пустой адрес
+
+tool:
+  git:
+    installations:
+    - home: "git"  # Использовать Git из PATH
+      name: "Default"
+  # Инструменты сборки. Удаление нарушит работу с Git
+
+  mavenGlobalConfig:
+    globalSettingsProvider: "standard"
+    settingsProvider: "standard"
+  # Настройки Maven. Удаление - настройки по умолчанию
