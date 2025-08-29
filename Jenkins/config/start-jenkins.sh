@@ -26,14 +26,14 @@ Waiting_for_Jenkins_to_be_ready () {
 
 # Шаблон обращения к jenkins-cli.jar
 jenkins_cli () {
-    java -jar jenkins-cli.jar -s http://localhost:8080/ -auth admin:$initialAdminPassword $@
+    java -jar /usr/app/config/jenkins-cli.jar -s http://localhost:8080/ -auth admin:$initialAdminPassword $@
 }
 
 Waiting_for_Jenkins_password_generation
 Waiting_for_Jenkins_to_be_ready
 
 echo "Начало скачки плагинов"
-mapfile -t plugins < "plugins.txt"  # Читаем ВСЕ строки сразу чтобы избежать конкуренции за stdin
+mapfile -t plugins < "/usr/app/config/plugins.txt"  # Читаем ВСЕ строки сразу чтобы избежать конкуренции за stdin
 for plugin in "${plugins[@]}"; do
     clean_plugin=$(echo -e "$plugin" | sed 's/ .*$//; s/#.*$//' | tr -d '\000-\031') # Удаление лишних символов и комментариев
     [[ -z "$clean_plugin" ]] && continue # Пропуск пустых строк
@@ -41,6 +41,13 @@ for plugin in "${plugins[@]}"; do
     jenkins_cli install-plugin "$clean_plugin"
 done
 echo "Конец скачки плагинов"
+
+'''
+echo "Установка конфигурации из файла"
+export CASC_JENKINS_CONFIG=/src/jenkins.yaml
+jenkins_cli reload-configuration
+echo "Конец установки конфигурации"
+'''
 
 # Перезагрузка после установки плагинов
 echo "Перезагрузка"
@@ -50,6 +57,8 @@ jenkins_cli restart
 Waiting_for_Jenkins_to_be_ready 
 Waiting_for_Jenkins_password_generation
 
+
+jenkins_cli create-job helmy-pipeline-job < /usr/app/src/config.xml
 
 echo "Всё готово!"
 
